@@ -1,0 +1,100 @@
+[gd_scene load_steps=14 format=3 uid="uid://bhntahcoaj0bb"]
+
+[ext_resource type="Script" uid="uid://c2q0gvmd33gkk" path="res://character/enemies/blob/blobEnemy.gd" id="1_lgmsy"]
+[ext_resource type="Script" uid="uid://ta6jm3o702cd" path="res://Scripts/state_machine.gd" id="1_ygwbf"]
+[ext_resource type="Script" uid="uid://d2u0uy87534jj" path="res://character/enemies/blob/Enemyidle.gd" id="2_hp78a"]
+[ext_resource type="Script" uid="uid://clnyonweouog4" path="res://character/enemies/blob/EnemyFollow.gd" id="4_5stk3"]
+[ext_resource type="PackedScene" uid="uid://djqmcmi40ihmm" path="res://scenes/health.tscn" id="5_81s7x"]
+[ext_resource type="Script" uid="uid://bc884drrlbi3f" path="res://character/enemies/blob/Enemydead.gd" id="5_fapd7"]
+[ext_resource type="Script" uid="uid://fl22xgefux05" path="res://Scripts/hurtbox.gd" id="6_l3eiy"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sn60l"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ygwbf"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5stk3"]
+albedo_color = Color(0.583648, 1.8049e-06, 3.36915e-07, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_5stk3"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_81s7x"]
+viewport_path = NodePath("healthbar3d/SubViewport")
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_fapd7"]
+
+[node name="Blob" type="CharacterBody3D" node_paths=PackedStringArray("groundcheck")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+script = ExtResource("1_lgmsy")
+groundcheck = NodePath("GroundCheck")
+health = 10.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_sn60l")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_ygwbf")
+surface_material_override/0 = SubResource("StandardMaterial3D_5stk3")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state")]
+script = ExtResource("1_ygwbf")
+initial_state = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="StateMachine" node_paths=PackedStringArray("enemy", "health")]
+script = ExtResource("2_hp78a")
+enemy = NodePath("../..")
+health = NodePath("../../healthbar3d/SubViewport/Health")
+metadata/_custom_type_script = "uid://d2u0uy87534jj"
+
+[node name="Follow" type="Node" parent="StateMachine" node_paths=PackedStringArray("enemy", "health")]
+script = ExtResource("4_5stk3")
+enemy = NodePath("../..")
+move_speed = 5
+health = NodePath("../../healthbar3d/SubViewport/Health")
+metadata/_custom_type_script = "uid://clnyonweouog4"
+
+[node name="Dead" type="Node" parent="StateMachine" node_paths=PackedStringArray("enemy")]
+script = ExtResource("5_fapd7")
+enemy = NodePath("../..")
+metadata/_custom_type_script = "uid://bc884drrlbi3f"
+
+[node name="GroundCheck" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GroundCheck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("SphereShape3D_5stk3")
+
+[node name="healthbar3d" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.18047, 0)
+billboard = 1
+texture = SubResource("ViewportTexture_81s7x")
+
+[node name="SubViewport" type="SubViewport" parent="healthbar3d"]
+transparent_bg = true
+use_hdr_2d = true
+size = Vector2i(143, 9)
+render_target_update_mode = 3
+
+[node name="Health" parent="healthbar3d/SubViewport" node_paths=PackedStringArray("parent") instance=ExtResource("5_81s7x")]
+layout_direction = 2
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -71.5
+offset_right = 71.5
+grow_horizontal = 2
+value = 100.0
+parent = NodePath("../../..")
+
+[node name="MyHurtBox" type="Area3D" parent="." node_paths=PackedStringArray("parent")]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("6_l3eiy")
+parent = NodePath("..")
+metadata/_custom_type_script = "uid://fl22xgefux05"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MyHurtBox"]
+shape = SubResource("CapsuleShape3D_fapd7")
+
+[connection signal="state_transitioned" from="StateMachine/Idle" to="." method="_on_idle_state_transitioned"]
+[connection signal="dead" from="healthbar3d/SubViewport/Health" to="." method="_on_health_dead"]
+[connection signal="dead" from="healthbar3d/SubViewport/Health" to="StateMachine/Follow" method="_on_health_dead"]

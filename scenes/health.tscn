@@ -1,0 +1,25 @@
+[gd_scene load_steps=6 format=3 uid="uid://djqmcmi40ihmm"]
+
+[ext_resource type="Script" uid="uid://dqdtfq13gooar" path="res://Scripts/health.gd" id="1_5e2k1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m5qx1"]
+
+[sub_resource type="Gradient" id="Gradient_5e2k1"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_2rad1"]
+gradient = SubResource("Gradient_5e2k1")
+fill_from = Vector2(0, 0.778986)
+fill_to = Vector2(0.0724638, 0.778986)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_58c75"]
+texture = SubResource("GradientTexture2D_2rad1")
+modulate_color = Color(0, 0.670588, 0.313726, 1)
+
+[node name="Health" type="ProgressBar"]
+offset_left = -72.0
+offset_right = 71.0
+offset_bottom = 32.0
+theme_override_styles/background = SubResource("StyleBoxFlat_m5qx1")
+theme_override_styles/fill = SubResource("StyleBoxTexture_58c75")
+show_percentage = false
+script = ExtResource("1_5e2k1")
