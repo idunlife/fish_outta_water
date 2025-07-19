@@ -13,6 +13,14 @@ func _ready():
 	connect("area_entered", _on_area_entered)
 
 func _on_area_entered(hitbox: MyHitBox)->void:
-	if hitbox !=null:
+	if hitbox !=null and hitbox.get_owner().is_in_group(enemycheck()):
 		parent.health -= hitbox.damage
 		receved_damage.emit(hitbox.damage)
+
+func enemycheck() -> String:
+	if parent.is_in_group("enemy"):
+		return "Player"
+	if parent.is_in_group("Player"):
+		return "enemy"
+	else:
+		return "entity"

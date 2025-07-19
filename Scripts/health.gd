@@ -14,3 +14,4 @@ func _process(delta):
 	if parent.health <= 0:
 		parent.health = 0
 		dead.emit(parent)
+		print("DEAD")

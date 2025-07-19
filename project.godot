@@ -18,6 +18,9 @@ config/icon="res://misc/icon.svg"
 [global_group]
 
 Ground=""
+enemy=""
+Player=""
+entity=""
 
 [input]
 

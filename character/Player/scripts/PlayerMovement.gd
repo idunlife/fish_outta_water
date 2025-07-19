@@ -7,10 +7,6 @@ class_name PlayerMovement
 
 var direction: Vector3
 
-func UPDATE(_delta:float):
-	if Input.is_action_pressed("dash"):
-		state_transitioned.emit(self, "dash")
-
 func Physics_Update(_delta: float):
 	
 	#makes the fish face where player is facing
@@ -20,5 +16,3 @@ func Physics_Update(_delta: float):
 	input_direction = (head.transform.basis * input_direction)
 	player.velocity = input_direction * move_speed
 	
-	if direction == Vector3.ZERO:
-		state_transitioned.emit(self, "idle")

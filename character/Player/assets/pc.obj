@@ -1,6 +1,6 @@
 # Blender 4.3.2
 # www.blender.org
-mtllib fish.mtl
+mtllib pc.mtl
 o Plane
 v 0.983438 0.014229 -0.045324
 v 0.844239 0.011885 -0.009385

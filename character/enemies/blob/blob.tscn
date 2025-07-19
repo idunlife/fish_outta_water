@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bhntahcoaj0bb"]
+[gd_scene load_steps=16 format=3 uid="uid://bhntahcoaj0bb"]
 
 [ext_resource type="Script" uid="uid://c2q0gvmd33gkk" path="res://character/enemies/blob/blobEnemy.gd" id="1_lgmsy"]
 [ext_resource type="Script" uid="uid://ta6jm3o702cd" path="res://Scripts/state_machine.gd" id="1_ygwbf"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://djqmcmi40ihmm" path="res://scenes/health.tscn" id="5_81s7x"]
 [ext_resource type="Script" uid="uid://bc884drrlbi3f" path="res://character/enemies/blob/Enemydead.gd" id="5_fapd7"]
 [ext_resource type="Script" uid="uid://fl22xgefux05" path="res://Scripts/hurtbox.gd" id="6_l3eiy"]
+[ext_resource type="Script" uid="uid://qec70biu6pvt" path="res://Scripts/hitbox.gd" id="8_n8wgk"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sn60l"]
 
@@ -22,7 +23,9 @@ viewport_path = NodePath("healthbar3d/SubViewport")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_fapd7"]
 
-[node name="Blob" type="CharacterBody3D" node_paths=PackedStringArray("groundcheck")]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_n8wgk"]
+
+[node name="Blob" type="CharacterBody3D" node_paths=PackedStringArray("groundcheck") groups=["enemy", "entity"]]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 script = ExtResource("1_lgmsy")
 groundcheck = NodePath("GroundCheck")
@@ -85,7 +88,7 @@ grow_horizontal = 2
 value = 100.0
 parent = NodePath("../../..")
 
-[node name="MyHurtBox" type="Area3D" parent="." node_paths=PackedStringArray("parent")]
+[node name="MyHurtBox" type="Area3D" parent="." node_paths=PackedStringArray("parent") groups=["enemy"]]
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("6_l3eiy")
@@ -94,6 +97,17 @@ metadata/_custom_type_script = "uid://fl22xgefux05"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="MyHurtBox"]
 shape = SubResource("CapsuleShape3D_fapd7")
+
+[node name="MyHitBox" type="Area3D" parent="." node_paths=PackedStringArray("parent")]
+collision_mask = 0
+script = ExtResource("8_n8wgk")
+parent = NodePath("..")
+damage = 5
+metadata/_custom_type_script = "uid://qec70biu6pvt"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MyHitBox"]
+transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_n8wgk")
 
 [connection signal="state_transitioned" from="StateMachine/Idle" to="." method="_on_idle_state_transitioned"]
 [connection signal="dead" from="healthbar3d/SubViewport/Health" to="." method="_on_health_dead"]
